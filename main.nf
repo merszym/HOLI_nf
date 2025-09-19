@@ -113,3 +113,5 @@ ch_tsv.map{it -> [it[0], it[1].splitCsv(sep: '\t', header:true)]}
     }
     .collectFile(name:'final_report.tsv', storeDir:'.' )
 }
+
+ch_versions.unique().collectFile(name: 'pipeline_versions.yml', storeDir:".")

@@ -8,19 +8,20 @@ process METADMG_CPP {
     output:
     tuple val(meta), path("summarytable.tsv"), emit: tsv
     path "versions.yml"                      , emit: versions
+    path "*.gz"                              , emit: gz
 
     script:
     """
     metaDMG-cpp lca --names ${names} --nodes ${nodes} --acc2tax ${acc2tax} \\
-    --sim_score_low 0.95 --sim_score_high 1 --bam ${bam} --fix_ncbi 0 --out_prefix LCA &&
+    --sim_score_low 0.95 --sim_score_high 1 --bam ${bam} --fix_ncbi 0 --out_prefix ${meta.id}.LCA &&
 
-    metaDMG-cpp dfit LCA.bdamage.gz --names ${names} --nodes ${nodes} \\
-    --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ss --out_prefix DFIT &&
+    metaDMG-cpp dfit ${meta.id}.LCA.bdamage.gz --names ${names} --nodes ${nodes} \\
+    --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ss --out_prefix ${meta.id}.DFIT &&
 
-    metaDMG-cpp aggregate LCA.bdamage.gz --dfit DFIT.dfit.gz --out_prefix AGG --lcastat LCA.stat.gz \\
+    metaDMG-cpp aggregate ${meta.id}.LCA.bdamage.gz --dfit ${meta.id}.DFIT.dfit.gz --out_prefix ${meta.id}.AGG --lcastat ${meta.id}.LCA.stat.gz \\
     --names ${names} --nodes ${nodes} &&
     
-    zcat AGG.stat.gz > summarytable.tsv
+    zcat ${meta.id}.AGG.stat.gz > summarytable.tsv
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
