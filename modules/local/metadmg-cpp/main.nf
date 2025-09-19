@@ -13,7 +13,7 @@ process METADMG_CPP {
     script:
     """
     metaDMG-cpp lca --names ${names} --nodes ${nodes} --acc2tax ${acc2tax} \\
-    --sim_score_low 0.95 --sim_score_high 1 --bam ${bam} --fix_ncbi 0 --out_prefix ${meta.id}.LCA &&
+    --sim_score_low 0.95 --sim_score_high 1 --bam ${bam} --fix_ncbi 0 --out_prefix ${meta.id}.LCA --lca_rank family &&
 
     metaDMG-cpp dfit ${meta.id}.LCA.bdamage.gz --names ${names} --nodes ${nodes} \\
     --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ss --out_prefix ${meta.id}.DFIT &&
